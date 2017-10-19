@@ -1,194 +1,288 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>BotSoft</title>
     <style>
-      /* Always set the map height explicitly to define the size of the div
+        /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
-        height: 100%;
-        margin-top: 40px;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #description {
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 300;
-      }
 
-      #infowindow-content .title {
-        font-weight: bold;
-      }
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
 
-      #infowindow-content {
-        display: none;
-      }
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
-      #map #infowindow-content {
-        display: inline;
-      }
+        #description {
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+        }
 
-      .pac-card {
-        margin: 10px 10px 0 0;
-        border-radius: 2px 0 0 2px;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        outline: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        background-color: #fff;
-        font-family: Roboto;
-      }
+        #infowindow-content .title {
+            font-weight: bold;
+        }
 
-      #pac-container {
-        padding-bottom: 12px;
-        margin-right: 12px;
-      }
+        #infowindow-content {
+            display: none;
+        }
 
-      .pac-controls {
-        display: inline-block;
-        padding: 5px 11px;
-      }
+        #map #infowindow-content {
+            display: inline;
+        }
 
-      .pac-controls label {
-        font-family: Roboto;
-        font-size: 13px;
-        font-weight: 300;
-      }
+        .pac-card {
+            margin: 10px 10px 0 0;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            font-family: Roboto;
+        }
 
-      #pac-input {
-        background-color: #fff;
-        border-width: 0px;
-        font-family: Roboto;
-        font-size: 20px;
-        font-weight: 300;
-        padding: 0 11px 0 13px;
-        text-overflow: ellipsis;
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        width: 75%;
-        height: 40px;
-      }
+        #pac-container {
+            padding-bottom: 12px;
+            margin-right: 12px;
+        }
 
-      #pac-button {
-        background-color: #fff;
-        border-width: 0px;
-        border-radius: 0;
-        -webkit-appearance: none;
-        position: absolute;
-        right: 0px;
-        top: 0px;
-        width: 17%;
-        height: 40px;
-      }
+        .pac-controls {
+            display: inline-block;
+            padding: 5px 11px;
+        }
 
-      #pac-input:focus {
-        border-color: #4d90fe;
-      }
+        .pac-controls label {
+            font-family: Roboto;
+            font-size: 13px;
+            font-weight: 300;
+        }
 
-      #title {
-        color: #fff;
-        background-color: #4d90fe;
-        font-size: 25px;
-        font-weight: 500;
-        padding: 6px 12px;
-      }
-      #target {
-        width: 345px;
-      }
+        #pac-input {
+            background-color: #fff;
+            border-width: 0px;
+            font-family: Roboto;
+            font-size: 20px;
+            font-weight: 300;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 75%;
+            height: 40px;
+        }
+
+        #pac-button {
+            background-color: #fff;
+            border-width: 0px;
+            border-radius: 0;
+            -webkit-appearance: none;
+            position: fixed;
+            right: 0px;
+            top: 0px;
+            width: 17%;
+            height: 40px;
+        }
+
+        #pac-button img {
+            width: 35px;
+            height: auto;
+        }
+
+        #pac-start {
+            border-radius: 50%;
+            background-color: #ffffff;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            /* bring your own prefixes */
+            transform: translate(-50%, -50%);
+            padding: 50px;
+        }
+
+        #pac-start img {
+            width: 50px;
+            height: auto;
+        }
+
+        #pac-input:focus {
+            border-color: #4d90fe;
+        }
+
+        #title {
+            color: #fff;
+            background-color: #4d90fe;
+            font-size: 25px;
+            font-weight: 500;
+            padding: 6px 12px;
+        }
+
+        #target {
+            width: 345px;
+        }
     </style>
-  </head>
-  <body>
-    <input id="pac-input" class="controls" type="text" placeholder="" autofocus>
-    <button id="pac-button" type="button">Send</button>
-    <div id="map"></div>
+</head>
+
+<body>
     <script>
-      // This example adds a search box to a map, using the Google Place Autocomplete
-      // feature. People can enter geographical searches. The search box will return a
-      // pick list containing a mix of places and predicted search terms.
-
-      // This example requires the Places library. Include the libraries=places
-      // parameter when you first load the API. For example:
-      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
-
-      function initAutocomplete() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 42.69352, lng: 23.332196},
-          zoom: 15,
-          mapTypeId: 'roadmap',
-          mapTypeControl: false
-        });
-
-        // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        input.focus();
-        var searchBox = new google.maps.places.SearchBox(input);
-        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-          searchBox.setBounds(map.getBounds());
-        });
-
-        var markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
-
-          if (places.length == 0) {
-            return;
-          }
-
-          // Clear out the old markers.
-          markers.forEach(function(marker) {
-            marker.setMap(null);
-          });
-          markers = [];
-
-          // For each place, get the icon, name and location.
-          var bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
             }
-            var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.com/en_US/messenger.Extensions.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'Messenger'));
+    </script>
+    <div id="input-container" hidden>
+        <input id="pac-input" class="controls" type="text" placeholder="">
+        <button id="pac-button" type="button">
+            <img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDQxLjk5OSA0MS45OTkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQxLjk5OSA0MS45OTk7IiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMzJweCIgaGVpZ2h0PSIzMnB4Ij4KPHBhdGggZD0iTTM2LjA2OCwyMC4xNzZsLTI5LTIwQzYuNzYxLTAuMDM1LDYuMzYzLTAuMDU3LDYuMDM1LDAuMTE0QzUuNzA2LDAuMjg3LDUuNSwwLjYyNyw1LjUsMC45OTl2NDAgIGMwLDAuMzcyLDAuMjA2LDAuNzEzLDAuNTM1LDAuODg2YzAuMTQ2LDAuMDc2LDAuMzA2LDAuMTE0LDAuNDY1LDAuMTE0YzAuMTk5LDAsMC4zOTctMC4wNiwwLjU2OC0wLjE3N2wyOS0yMCAgYzAuMjcxLTAuMTg3LDAuNDMyLTAuNDk0LDAuNDMyLTAuODIzUzM2LjMzOCwyMC4zNjMsMzYuMDY4LDIwLjE3NnogTTcuNSwzOS4wOTVWMi45MDRsMjYuMjM5LDE4LjA5Nkw3LjUsMzkuMDk1eiIgZmlsbD0iIzAwMDAwMCIvPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K"
+            />
+        </button>
+    </div>
+    <div id="map"></div>
+    <button id="pac-start" type="button">
+        <img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDU4IDU4IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1OCA1ODsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+CjxlbGxpcHNlIHN0eWxlPSJmaWxsOiMyM0EyNEQ7IiBjeD0iMjkiIGN5PSI1MCIgcng9IjI5IiByeT0iOCIvPgo8cGF0aCBzdHlsZT0iZmlsbDojRUJCQTE2OyIgZD0iTTQxLjY3Niw1LjMyNEw0MS42NzYsNS4zMjRjLTcuMDk4LTcuMDk4LTE4LjYwNy03LjA5OC0yNS43MDYsMGgwICBDOS41NzQsMTEuNzIsOC44NTUsMjMuNzYzLDE0LjI4MiwzMWwxNC41NDEsMjFsMTQuNTQxLTIxQzQ4Ljc5MiwyMy43NjMsNDguMDcyLDExLjcyLDQxLjY3Niw1LjMyNHogTTI5LDI0Yy0zLjMxNCwwLTYtMi42ODYtNi02ICBzMi42ODYtNiw2LTZzNiwyLjY4Niw2LDZTMzIuMzE0LDI0LDI5LDI0eiIvPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K"
+        />
+    </button>
+    <script>
+        // This example adds a search box to a map, using the Google Place Autocomplete
+        // feature. People can enter geographical searches. The search box will return a
+        // pick list containing a mix of places and predicted search terms.
 
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
-              map: map,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
-            }));
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            }
-          });
-          map.fitBounds(bounds);
-        });
-      }
+        function initAutocomplete() {
+            var typingTimer; //timer identifier
+            var doneTypingInterval = 2000; //time in ms, 2 second for example
 
+
+
+            navigator.geolocation.getCurrentPosition(function (location) {
+
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    center: {
+                        lat: location.coords.latitude,
+                        lng: location.coords.longitude
+                    },
+                    zoom: 15,
+                    mapTypeId: 'roadmap',
+                    mapTypeControl: false
+                });
+
+
+                // Create the search box and link it to the UI element.
+                var input = document.getElementById('pac-input');
+
+                input.onkeyup = function () {
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                }
+
+                input.onkeydown = function () {
+                    clearTimeout(typingTimer);
+                }
+
+                function doneTyping() {
+                    
+                }
+
+                var searchBox = new google.maps.places.SearchBox(input);
+                // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+                var sendButton = document.getElementById('pac-button');
+                sendButton.onclick = function () {
+                    MessengerExtensions.requestCloseBrowser(function success() {
+                        
+                    }, function error(err) {
+                     
+                    });
+                };
+
+
+                var startButton = document.getElementById('pac-start');
+
+                var inputContainer = document.getElementById('input-container');
+                startButton.onclick = function () {
+                    inputContainer.hidden = false;
+                    document.getElementById("map").style.marginTop = "40px";
+                    startButton.hidden = true;
+
+                    input.focus();
+                }
+
+                // Bias the SearchBox results towards current map's viewport.
+                map.addListener('bounds_changed', function () {
+                    searchBox.setBounds(map.getBounds());
+                });
+
+                var markers = [];
+                // Listen for the event fired when the user selects a prediction and retrieve
+                // more details for that place.
+                searchBox.addListener('places_changed', function () {
+                    var places = searchBox.getPlaces();
+
+                    if (places.length == 0) {
+                        return;
+                    }
+
+                    // Clear out the old markers.
+                    markers.forEach(function (marker) {
+                        marker.setMap(null);
+                    });
+                    markers = [];
+
+                    // For each place, get the icon, name and location.
+                    var bounds = new google.maps.LatLngBounds();
+                    places.forEach(function (place) {
+                        if (!place.geometry) {
+                            console.log("Returned place contains no geometry");
+                            return;
+                        }
+                        var icon = {
+                            url: place.icon,
+                            size: new google.maps.Size(71, 71),
+                            origin: new google.maps.Point(0, 0),
+                            anchor: new google.maps.Point(17, 34),
+                            scaledSize: new google.maps.Size(25, 25)
+                        };
+
+                        // Create a marker for each place.
+                        markers.push(new google.maps.Marker({
+                            map: map,
+                            icon: icon,
+                            title: place.name,
+                            position: place.geometry.location
+                        }));
+
+                        if (place.geometry.viewport) {
+                            // Only geocodes have viewport.
+                            bounds.union(place.geometry.viewport);
+                        } else {
+                            bounds.extend(place.geometry.location);
+                        }
+                    });
+                    map.fitBounds(bounds);
+                });
+            });
+        }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6MkyeXgGPQb_Kxd5PDxFacIKrCh9OEGk&libraries=places&callback=initAutocomplete"
-         async defer></script>
-  </body>
+        async defer></script>
+</body>
+
 </html>
